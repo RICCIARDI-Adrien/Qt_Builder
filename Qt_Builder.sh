@@ -75,13 +75,54 @@ then
 fi
 
 # Install Qt
-PrintMessage "Installing..."
+PrintMessage "Installing Qt..."
 make install
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to install Qt.\n\033[0m\n"
 	exit 5
 fi
+
+# Download linuxdeployqt sources
+PrintMessage "Downloading linuxdeployqt sources..."
+cd $BUILD_DIRECTORY_PATH
+git clone https://github.com/probonopd/linuxdeployqt
+if [ $? -ne 0 ]
+then
+	printf "\033[31mError : failed to clone linuxdeployqt repository.\n\033[0m\n"
+	exit 6
+fi
+
+# Build linuxdeployqt
+PrintMessage "Building linuxdeployqt..."
+# Configure project
+cd ${BUILD_DIRECTORY_PATH}/linuxdeployqt
+/opt/Qt/${QT_VERSION}/bin/qmake
+if [ $? -ne 0 ]
+then
+	printf "\033[31mError : failed to configure linuxdeployqt.\n\033[0m\n"
+	exit 7
+fi
+# Build it
+make
+if [ $? -ne 0 ]
+then
+	printf "\033[31mError : failed to build linuxdeployqt.\n\033[0m\n"
+	exit 8
+fi
+
+# Install linuxdeployqt
+PrintMessage "Installing linuxdeployqt..."
+cd ${BUILD_DIRECTORY_PATH}/linuxdeployqt
+make install
+if [ $? -ne 0 ]
+then
+	printf "\033[31mError : failed to install linuxdeployqt.\n\033[0m\n"
+	exit 9
+fi
+# Make linuxdeployqt available from everywhere
+cd /usr/bin
+sudo ln -s /opt/Qt/${QT_VERSION}/bin/linuxdeployqt linuxdeployqt
 
 # Clean build artifacts
 rm -rf $BUILD_DIRECTORY_PATH
