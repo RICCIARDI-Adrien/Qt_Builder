@@ -57,7 +57,7 @@ cd $QT_SOURCE_FILE_BASE_NAME
 
 # Configure build
 PrintMessage "Configuring Qt build..."
-./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples
+./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -qt-xcb -linker gold
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to configure Qt build.\n\033[0m\n"
