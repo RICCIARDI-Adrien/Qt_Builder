@@ -114,7 +114,7 @@ fi
 # Install linuxdeployqt
 PrintMessage "Installing linuxdeployqt..."
 cd ${BUILD_DIRECTORY_PATH}/linuxdeployqt
-make install
+sudo make install
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to install linuxdeployqt.\n\033[0m\n"
