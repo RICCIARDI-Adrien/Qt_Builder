@@ -121,8 +121,7 @@ then
 	exit 9
 fi
 # Make linuxdeployqt available from everywhere
-cd /usr/bin
-sudo ln -s /opt/Qt/${QT_VERSION}/bin/linuxdeployqt linuxdeployqt
+sudo ln -sf /opt/Qt/${QT_VERSION}/bin/linuxdeployqt /usr/bin/linuxdeployqt
 
 # Clean build artifacts
 rm -rf $BUILD_DIRECTORY_PATH
