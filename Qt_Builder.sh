@@ -14,9 +14,9 @@ PrintMessage()
 # Entry point
 #--------------------------------------------------------------------------------------------------
 # Display banner
-printf "+--------------------------------------+\n"
-printf "| Qt Builder (C) 2019 Adrien RICCIARDI |\n"
-printf "+--------------------------------------+\n"
+printf "+-------------------------------------------+\n"
+printf "| Qt Builder (C) 2019-2020 Adrien RICCIARDI |\n"
+printf "+-------------------------------------------+\n"
 
 # Make sure a Qt version has been provided
 QT_VERSION=$1
