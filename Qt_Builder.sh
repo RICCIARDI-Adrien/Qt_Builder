@@ -58,7 +58,7 @@ cd $QT_SOURCE_FILE_BASE_NAME
 # Configure build
 PrintMessage "Configuring Qt build..."
 # Some options have been removed starting from Qt 5.15
-if [ "$QT_MAJOR_VERSION" == "5.15" ]
+if [ "$QT_MAJOR_VERSION" = "5.15" ]
 then
 	QT_CONFIGURATION_FLAGS=-bundled-xcb-xinput
 else
