@@ -60,7 +60,8 @@ PrintMessage "Configuring Qt build..."
 # Some options have been removed starting from Qt 5.15
 if [ "$QT_MAJOR_VERSION" = "5.15" ]
 then
-	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb"
+	# Do not build QWebEngine as it requires too much RAM to succeed without modification on a 32-bit system
+	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb -skip qtwebengine"
 else
 	QT_CONFIGURATION_FLAGS="-qt-xcb"
 fi
