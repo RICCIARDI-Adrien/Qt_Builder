@@ -60,12 +60,12 @@ PrintMessage "Configuring Qt build..."
 # Some options have been removed starting from Qt 5.15
 if [ "$QT_MAJOR_VERSION" = "5.15" ]
 then
-	# Do not build QWebEngine as it requires too much RAM to succeed without modification on a 32-bit system
-	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb -skip qtwebengine"
+	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb"
 else
 	QT_CONFIGURATION_FLAGS="-qt-xcb"
 fi
-./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -linker gold $QT_CONFIGURATION_FLAGS
+# Do not build QWebEngine as it requires too much RAM to succeed without modification on a 32-bit system
+./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -linker gold -skip qtwebengine $QT_CONFIGURATION_FLAGS
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to configure Qt build.\n\033[0m\n"
