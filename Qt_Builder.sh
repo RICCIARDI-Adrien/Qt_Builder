@@ -15,7 +15,7 @@ PrintMessage()
 #--------------------------------------------------------------------------------------------------
 # Display banner
 printf "+-------------------------------------------+\n"
-printf "| Qt Builder (C) 2019-2020 Adrien RICCIARDI |\n"
+printf "| Qt Builder (C) 2019-2021 Adrien RICCIARDI |\n"
 printf "+-------------------------------------------+\n"
 
 # Make sure a Qt version has been provided
@@ -26,6 +26,11 @@ then
 	printf "For instance, to build Qt 5.12.3 use the following command : $0 5.12.3\n"
 	exit 1
 fi
+
+# Extract Qt version fields
+QT_VERSION_MAJOR=$(echo $QT_VERSION | awk -F "." '{ print $1 }')
+QT_VERSION_MINOR=$(echo $QT_VERSION | awk -F "." '{ print $2 }')
+QT_VERSION_PATCH=$(echo $QT_VERSION | awk -F "." '{ print $3 }')
 
 # Create build directories
 PrintMessage "Creating build environment..."
@@ -38,9 +43,8 @@ mkdir -p $BUILD_DIRECTORY_PATH
 # Download all required sources
 PrintMessage "Downloading Qt sources..."
 # Create downloading URL
-QT_MAJOR_VERSION=$(echo $QT_VERSION | awk -F "." '{ print $1"."$2 }')
 QT_SOURCE_FILE_BASE_NAME=qt-everywhere-src-${QT_VERSION}
-QT_SOURCES_URL="http://download.qt.io/archive/qt/${QT_MAJOR_VERSION}/${QT_VERSION}/single/${QT_SOURCE_FILE_BASE_NAME}.tar.xz"
+QT_SOURCES_URL="http://download.qt.io/archive/qt/${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}/${QT_VERSION}/single/${QT_SOURCE_FILE_BASE_NAME}.tar.xz"
 # Download data
 wget $QT_SOURCES_URL -O "${BUILD_DIRECTORY_PATH}/${QT_SOURCE_FILE_BASE_NAME}.tar.xz"
 if [ $? -ne 0 ]
@@ -57,15 +61,20 @@ cd $QT_SOURCE_FILE_BASE_NAME
 
 # Configure build
 PrintMessage "Configuring Qt build..."
-# Some options have been removed starting from Qt 5.15
-if [ "$QT_MAJOR_VERSION" = "5.15" ]
+# XCB options have been modified starting from Qt 5.15
+if [ ${QT_VERSION_MAJOR} -eq 5 ] && [ ${QT_VERSION_MINOR} -eq 15 ]
 then
 	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb"
 else
 	QT_CONFIGURATION_FLAGS="-qt-xcb"
 fi
+# Qt versions before Qt 5.13 do not know about gold linker
+if [ ${QT_VERSION_MAJOR} -eq 5 ] && [ ${QT_VERSION_MINOR} -ge 13 ]
+then
+	QT_CONFIGURATION_FLAGS="${QT_CONFIGURATION_FLAGS} -linker gold"
+fi
 # Do not build QWebEngine as it requires too much RAM to succeed without modification on a 32-bit system
-./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -linker gold -skip qtwebengine $QT_CONFIGURATION_FLAGS
+./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -skip qtwebengine $QT_CONFIGURATION_FLAGS
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to configure Qt build.\n\033[0m\n"
