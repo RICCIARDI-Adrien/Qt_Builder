@@ -5,9 +5,9 @@
 #--------------------------------------------------------------------------------------------------
 PrintMessage()
 {
-	printf "\033[33m----------------------------------------------------------------------\n\033[0m"
-	printf "\033[33m$1\n\033[0m"
-	printf "\033[33m----------------------------------------------------------------------\n\033[0m"
+	printf "\033[33m----------------------------------------------------------------------\033[0m\n"
+	printf "\033[33m$1\033[0m\n"
+	printf "\033[33m----------------------------------------------------------------------\033[0m\n"
 }
 
 #--------------------------------------------------------------------------------------------------
@@ -28,9 +28,9 @@ then
 fi
 
 # Extract Qt version fields
-QT_VERSION_MAJOR=$(echo $QT_VERSION | awk -F "." '{ print $1 }')
-QT_VERSION_MINOR=$(echo $QT_VERSION | awk -F "." '{ print $2 }')
-QT_VERSION_PATCH=$(echo $QT_VERSION | awk -F "." '{ print $3 }')
+QT_VERSION_MAJOR=$(echo $QT_VERSION | cut -d '.' -f 1)
+QT_VERSION_MINOR=$(echo $QT_VERSION | cut -d '.' -f 2)
+QT_VERSION_PATCH=$(echo $QT_VERSION | cut -d '.' -f 3)
 
 # Create build directories
 PrintMessage "Creating build environment..."
