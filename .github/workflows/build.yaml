@@ -1,0 +1,23 @@
+name: Build supported Qt versions
+on: [push, pull_request]
+
+jobs:
+  qt5:
+    name: Qt 5
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        version: [5.12.11, 5.14.2, 5.15.2]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name: Enable Ubuntu source repositories
+        run: |
+          sudo sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
+      - name: Install build dependency packages
+        run: |
+          sudo apt update
+          sudo apt build-dep qt5-default
+          sudo apt install bison flex gperf libclang-dev libdbus-1-dev libnss3-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxtst-dev patchelf
+      - name: Build Qt ${{ matrix.version }}
+        run: ./Qt_Builder.sh ${{ matrix.version }}
