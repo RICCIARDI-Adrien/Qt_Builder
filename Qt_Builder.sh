@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #--------------------------------------------------------------------------------------------------
 # Private functions
@@ -44,7 +44,7 @@ mkdir -p $BUILD_DIRECTORY_PATH
 PrintMessage "Downloading Qt sources..."
 # Create downloading URL
 QT_SOURCE_FILE_BASE_NAME=qt-everywhere-src-${QT_VERSION}
-QT_SOURCES_URL="http://download.qt.io/archive/qt/${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}/${QT_VERSION}/single/${QT_SOURCE_FILE_BASE_NAME}.tar.xz"
+QT_SOURCES_URL="https://download.qt.io/archive/qt/${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}/${QT_VERSION}/single/${QT_SOURCE_FILE_BASE_NAME}.tar.xz"
 # Download data
 wget $QT_SOURCES_URL -O "${BUILD_DIRECTORY_PATH}/${QT_SOURCE_FILE_BASE_NAME}.tar.xz"
 if [ $? -ne 0 ]
@@ -62,14 +62,14 @@ cd $QT_SOURCE_FILE_BASE_NAME
 # Configure build
 PrintMessage "Configuring Qt build..."
 # XCB options have been modified starting from Qt 5.15
-if [ ${QT_VERSION_MAJOR} -eq 5 ] && [ ${QT_VERSION_MINOR} -eq 15 ]
+if [[ (${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -eq 15) || ${QT_VERSION_MAJOR} -eq 6 ]]
 then
 	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb"
 else
 	QT_CONFIGURATION_FLAGS="-qt-xcb"
 fi
 # Qt versions before Qt 5.13 do not know about gold linker
-if [ ${QT_VERSION_MAJOR} -eq 5 ] && [ ${QT_VERSION_MINOR} -ge 13 ]
+if [[ (${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -ge 13) || ${QT_VERSION_MAJOR} -eq 6 ]]
 then
 	QT_CONFIGURATION_FLAGS="${QT_CONFIGURATION_FLAGS} -linker gold"
 fi
@@ -83,8 +83,14 @@ fi
 
 # Build everything
 PrintMessage "Building..."
-PROCESSORS_COUNT=$(cat /proc/cpuinfo  | grep "processor" | wc -l)
-make -j $PROCESSORS_COUNT
+if [ ${QT_VERSION_MAJOR} -eq 5 ]
+then
+	PROCESSORS_COUNT=$(cat /proc/cpuinfo  | grep "processor" | wc -l)
+	BUILD_COMMAND="make -j $PROCESSORS_COUNT"
+else
+	BUILD_COMMAND="ninja"
+fi
+eval $BUILD_COMMAND
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to build Qt.\n\033[0m\n"
@@ -93,7 +99,13 @@ fi
 
 # Install Qt
 PrintMessage "Installing Qt..."
-sudo make install
+if [ ${QT_VERSION_MAJOR} -eq 5 ]
+then
+	INSTALL_COMMAND="sudo make install"
+else
+	INSTALL_COMMAND="sudo cmake --install ."
+fi
+eval $INSTALL_COMMAND
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to install Qt.\n\033[0m\n"
