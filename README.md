@@ -1,3 +1,5 @@
+[![](https://github.com/RICCIARDI-Adrien/Qt_Builder/workflows/Build%20supported%20Qt%20versions/badge.svg)](https://github.com/RICCIARDI-Adrien/Qt_Builder/actions)
+
 # Qt Builder
 
 Allow to easily build latest Qt version from sources on 32 and 64-bit Linux systems.
