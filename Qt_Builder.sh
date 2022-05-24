@@ -36,12 +36,21 @@ QT_VERSION_PATCH=$(echo $QT_VERSION | cut -d '.' -f 3)
 if [ ${QT_VERSION_MAJOR} -eq 6 ]
 then
 	# CMake version
-	CMAKE_VERSION=$(cmake --version | grep "cmake version" | cut -d ' ' -f 3)
+	CMAKE_VERSION=$(cmake --version | head -n 1 | cut -d ' ' -f 3)
 	CMAKE_VERSION_MAJOR=$(echo $CMAKE_VERSION | cut -d '.' -f 1)
 	CMAKE_VERSION_MINOR=$(echo $CMAKE_VERSION | cut -d '.' -f 2)
 	if [[ ${CMAKE_VERSION_MAJOR} -lt 3 || (${CMAKE_VERSION_MAJOR} -eq 3 && ${CMAKE_VERSION_MINOR} -lt 16) ]]
 	then
 		printf "\033[31mError : CMake version must be greater or equal to 3.16.\n\033[0m\n"
+		exit 1
+	fi
+
+	# G++ version
+	GPLUSPLUS_VERSION=$(g++ --version | head -n 1 | cut -d ' ' -f 4)
+	GPLUSPLUS_VERSION_MAJOR=$(echo $GPLUSPLUS_VERSION | cut -d '.' -f 1)
+	if [ ${GPLUSPLUS_VERSION_MAJOR} -lt 8 ]
+	then
+		printf "\033[31mError : G++ version must be greater or equal to 8.\n\033[0m\n"
 		exit 1
 	fi
 fi
