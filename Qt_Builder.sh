@@ -15,7 +15,7 @@ PrintMessage()
 #--------------------------------------------------------------------------------------------------
 # Display banner
 printf "+-------------------------------------------+\n"
-printf "| Qt Builder (C) 2019-2021 Adrien RICCIARDI |\n"
+printf "| Qt Builder (C) 2019-2022 Adrien RICCIARDI |\n"
 printf "+-------------------------------------------+\n"
 
 # Make sure a Qt version has been provided
@@ -31,6 +31,20 @@ fi
 QT_VERSION_MAJOR=$(echo $QT_VERSION | cut -d '.' -f 1)
 QT_VERSION_MINOR=$(echo $QT_VERSION | cut -d '.' -f 2)
 QT_VERSION_PATCH=$(echo $QT_VERSION | cut -d '.' -f 3)
+
+# Make sure some tools versions are recent enough for Qt 6
+if [ ${QT_VERSION_MAJOR} -eq 6 ]
+then
+	# CMake version
+	CMAKE_VERSION=$(cmake --version | grep "cmake version" | cut -d ' ' -f 3)
+	CMAKE_VERSION_MAJOR=$(echo $CMAKE_VERSION | cut -d '.' -f 1)
+	CMAKE_VERSION_MINOR=$(echo $CMAKE_VERSION | cut -d '.' -f 2)
+	if [[ ${CMAKE_VERSION_MAJOR} -lt 3 || (${CMAKE_VERSION_MAJOR} -eq 3 && ${CMAKE_VERSION_MINOR} -lt 16) ]]
+	then
+		printf "\033[31mError : CMake version must be greater or equal to 3.16.\n\033[0m\n"
+		exit 1
+	fi
+fi
 
 # Create build directories
 PrintMessage "Creating build environment..."
