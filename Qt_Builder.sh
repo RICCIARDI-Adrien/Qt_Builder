@@ -108,8 +108,7 @@ fi
 PrintMessage "Building..."
 if [ ${QT_VERSION_MAJOR} -eq 5 ]
 then
-	PROCESSORS_COUNT=$(cat /proc/cpuinfo  | grep "processor" | wc -l)
-	BUILD_COMMAND="make -j $PROCESSORS_COUNT"
+	BUILD_COMMAND="make -j $(nproc)"
 else
 	BUILD_COMMAND="ninja"
 fi
