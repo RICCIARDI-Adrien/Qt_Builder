@@ -65,20 +65,25 @@ mkdir -p $BUILD_DIRECTORY_PATH
 
 # Download all required sources
 PrintMessage "Downloading Qt sources..."
-# Create downloading URL
-if [[ ${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -eq 15 && ${QT_VERSION_PATCH} -ge 3 ]]
-then
-	QT_ARCHIVE_FILE_NAME=qt-everywhere-opensource-src-${QT_VERSION}.tar.xz
-else
-	QT_ARCHIVE_FILE_NAME=qt-everywhere-src-${QT_VERSION}.tar.xz
-fi
+# Create the downloading URL
+# Start with the "normal" URL Qt has been using for years
+QT_ARCHIVE_FILE_NAME=qt-everywhere-src-${QT_VERSION}.tar.xz
 QT_SOURCES_URL="https://download.qt.io/archive/qt/${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}/${QT_VERSION}/single/${QT_ARCHIVE_FILE_NAME}"
 # Download data
 wget $QT_SOURCES_URL -O "${BUILD_DIRECTORY_PATH}/${QT_ARCHIVE_FILE_NAME}"
 if [ $? -ne 0 ]
 then
-	printf "\033[31mError : source archive downloading failed.\n\033[0m\n"
-	exit 2
+	printf "\033[35mWarning : source archive downloading failed, trying the special URL for LTS releases.\n\033[0m\n"
+
+	# Try with the special URL for the LTS releases that Qt Company is blocking behind a paywall (only the versions released as open source will be available)
+	QT_ARCHIVE_FILE_NAME=qt-everywhere-opensource-src-${QT_VERSION}.tar.xz
+	QT_SOURCES_URL="https://download.qt.io/archive/qt/${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}/${QT_VERSION}/single/${QT_ARCHIVE_FILE_NAME}"
+	wget $QT_SOURCES_URL -O "${BUILD_DIRECTORY_PATH}/${QT_ARCHIVE_FILE_NAME}"
+	if [ $? -ne 0 ]
+	then
+		printf "\033[31mError : source archive downloading failed.\n\033[0m\n"
+		exit 2
+	fi
 fi
 
 # Extract sources
