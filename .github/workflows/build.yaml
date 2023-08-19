@@ -4,7 +4,8 @@ on: [push, pull_request]
 jobs:
   qt5:
     name: Qt 5
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
+    container: ubuntu:18.04
     strategy:
       fail-fast: false
       matrix:
@@ -15,12 +16,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Enable Ubuntu source repositories
         run: |
-          sudo sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
+          sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
       - name: Install build dependency packages
         run: |
-          sudo apt update
-          sudo apt build-dep qt5-default
-          sudo apt install bison flex gperf libclang-dev libdbus-1-dev libnss3-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxtst-dev patchelf
+          apt update
+          apt build-dep -y qt5-default
+          apt install -y bison flex git gperf libclang-dev libdbus-1-dev libnss3-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxtst-dev patchelf python sudo wget
       - name: Build Qt ${{ matrix.version }}
         run: ./Qt_Builder.sh ${{ matrix.version }}
 
