@@ -40,12 +40,28 @@ jobs:
           mount
           df -h
           free -h
-      - name: Install disk space freeing dependency packages
-        run: |
-          apt update
-          apt install -y sudo
+          printf "\033[32mls -l /__w\033[0m\n"
+          ls -l /__w
+          printf "\033[32mls -l /\033[0m\n"
+          ls -l /
+          printf "\033[32mdu -sh /__w\033[0m\n"
+          du -sh /__w
+          printf "\033[32mfind /__w\033[0m\n"
+          find /__w
+          printf "\033[32mfind /\033[0m\n"
+          find /
+          # du -sh /__w/usr/share/dotnet
+          # du -sh /usr/local/lib/android
+          # ls -l /opt
+          # du -sh /opt/ghc
+          # dh -sh /opt
+      #- name: Install disk space freeing dependency packages
+      #  run: |
+      #    apt update
+      #    apt install -y sudo
       - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
+        #uses: jlumbroso/free-disk-space@main
+        run: rm -rf /usr/share/dotnet
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Enable Ubuntu source repositories
