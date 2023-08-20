@@ -27,8 +27,8 @@ jobs:
 
   qt6:
     name: Qt 6
-    runs-on: ubuntu-latest
-    container: ubuntu:20.04
+    runs-on: ubuntu-20.04
+    #container: ubuntu:20.04
     strategy:
       fail-fast: false
       matrix:
@@ -40,16 +40,16 @@ jobs:
           mount
           df -h
           free -h
-          printf "\033[32mls -l /__w\033[0m\n"
-          ls -l /__w
-          printf "\033[32mls -l /\033[0m\n"
-          ls -l /
-          printf "\033[32mdu -sh /__w\033[0m\n"
-          du -sh /__w
-          printf "\033[32mfind /__w\033[0m\n"
-          find /__w
-          printf "\033[32mfind /\033[0m\n"
-          find /
+          # printf "\033[32mls -l /__w\033[0m\n"
+          # ls -l /__w
+          # printf "\033[32mls -l /\033[0m\n"
+          # ls -l /
+          # printf "\033[32mdu -sh /__w\033[0m\n"
+          # du -sh /__w
+          # printf "\033[32mfind /__w\033[0m\n"
+          # find /__w
+          # printf "\033[32mfind /\033[0m\n"
+          # find /
           # du -sh /__w/usr/share/dotnet
           # du -sh /usr/local/lib/android
           # ls -l /opt
@@ -59,23 +59,51 @@ jobs:
       #  run: |
       #    apt update
       #    apt install -y sudo
+      - name: Update packages index for the disk space freeing action
+        run: sudo apt update
       - name: Free disk space
-        #uses: jlumbroso/free-disk-space@main
-        run: rm -rf /usr/share/dotnet
+        uses: jlumbroso/free-disk-space@main
+        # with:
+        #   android: true
+        #   dotnet: false
+        #   haskell: false
+        #   large-packages: false
+        #   docker-images: false
+        #   swap-storage: false
+        #run: rm -rf /usr/share/dotnet
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Enable Ubuntu source repositories
         run: |
-          sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
+          sudo sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
       - name: Install build dependency packages
-        # Specify the environment variables DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC for the tzdata package, otherwise it would ask the non-present user to pick a timezone
         run: |
-          apt update
-          DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt build-dep -y qtbase5-dev
-          apt install -y bison cmake flex git gperf libb2-dev libclang-dev libclang-11-dev libclang-12-dev libdbus-1-dev libdirectfb-dev libgstreamer1.0-dev libnss3-dev libsystemd-dev libts-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxcb-composite0-dev libxcb-cursor-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-dri2-0-dev libxcb-dri3-dev libxcb-ewmh-dev libxcb-present-dev libxcb-record0-dev libxcb-res0-dev libxcb-screensaver0-dev libxcb-xf86dri0-dev libxcb-xtest0-dev libxcb-xv0-dev libxcb-xvmc0-dev libxtst-dev ninja-build patchelf python sudo wget xcb
+          printf "\033[32mf--------------\033[0m\n"
+          whereis cmake
+          printf "\033[32mf--------------\033[0m\n"
+          sudo apt update
+          sudo apt build-dep -y qtbase5-dev
+          sudo apt install -y bison cmake flex gperf libb2-dev libclang-dev libclang-11-dev libclang-12-dev libdbus-1-dev libdirectfb-dev libgstreamer1.0-dev libnss3-dev libsystemd-dev libts-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxcb-composite0-dev libxcb-cursor-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-dri2-0-dev libxcb-dri3-dev libxcb-ewmh-dev libxcb-present-dev libxcb-record0-dev libxcb-res0-dev libxcb-screensaver0-dev libxcb-xf86dri0-dev libxcb-xtest0-dev libxcb-xv0-dev libxcb-xvmc0-dev libxtst-dev ninja-build patchelf xcb locate
       - name: Build Qt ${{ matrix.version }}
         run: |
+          printf "\033[32mf--------------\033[0m\n"
           mount
+          printf "\033[32mf--------------\033[0m\n"
           df -h
+          printf "\033[32mf--------------\033[0m\n"
           free -h
+          printf "\033[32mf--------------\033[0m\n"
+          apt search cmake
+          printf "\033[32mf--------------\033[0m\n"
+          dpkg -l | grep -i cmake
+          printf "\033[32mf--------------\033[0m\n"
+          whereis cmake
+          printf "\033[32mf--------------\033[0m\n"
+          cmake --version
+          printf "\033[32mrm--------------\033[0m\n"
+          sudo rm -fr /usr/bin/cmake /usr/lib/x86_64-linux-gnu/cmake
+          printf "\033[32mf--------------\033[0m\n"
+          whereis cmake
+          printf "\033[32mf--------------\033[0m\n"
+          cmake --version
           ./Qt_Builder.sh ${{ matrix.version }}
