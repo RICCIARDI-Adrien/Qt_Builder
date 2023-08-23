@@ -107,7 +107,8 @@ then
 	QT_CONFIGURATION_FLAGS="${QT_CONFIGURATION_FLAGS} -linker gold"
 fi
 # Do not build QWebEngine as it requires too much RAM to succeed without modification on a 32-bit system
-./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -skip qtwebengine $QT_CONFIGURATION_FLAGS
+# Statically link the OpenSSL version that Qt desires to avoid compatibility issues on deployed systems
+./configure -prefix /opt/Qt/$QT_VERSION -opensource -release -confirm-license -nomake tests -nomake examples -skip qtwebengine -openssl-linked $QT_CONFIGURATION_FLAGS
 if [ $? -ne 0 ]
 then
 	printf "\033[31mError : failed to configure Qt build.\n\033[0m\n"
