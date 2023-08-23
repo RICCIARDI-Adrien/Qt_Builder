@@ -36,6 +36,15 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
+      - name: Free disk space (GitHub image does not have enough free space)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          android: true
+          dotnet: true
+          haskell: false
+          large-packages: false
+          docker-images: false
+          swap-storage: false
       - name: Enable Ubuntu source repositories
         run: |
           sudo sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
