@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         # Still compile Qt 5.15.2 because archive names have changed starting from Qt 5.15.3, due to Qt changing their license
-        version: [5.12.12, 5.14.2, 5.15.2, 5.15.10]
+        version: [5.12.12, 5.13.2, 5.14.2, 5.15.2, 5.15.10]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
