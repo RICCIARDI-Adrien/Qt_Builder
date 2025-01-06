@@ -22,9 +22,17 @@ printf "+-------------------------------------------+\n"
 QT_VERSION=$1
 if [ -z $QT_VERSION ]
 then
-	printf "Usage : $0 Qt_Version\n"
+	printf "Usage : $0 Qt_Version [Temporary_Build_Directory]\n"
 	printf "For instance, to build Qt 5.12.3 use the following command : $0 5.12.3\n"
 	exit 1
+fi
+
+# Retrieve the optional build directory argument
+if [ -n "$2" ]
+then
+	BUILD_DIRECTORY_BASE_PATH="$2"
+else
+	BUILD_DIRECTORY_BASE_PATH=/tmp
 fi
 
 # Extract Qt version fields
@@ -57,7 +65,7 @@ fi
 
 # Create build directories
 PrintMessage "Creating build environment..."
-BUILD_DIRECTORY_PATH="/tmp/Qt_Builder_${QT_VERSION}"
+BUILD_DIRECTORY_PATH=$(realpath $BUILD_DIRECTORY_BASE_PATH)/"Qt_Builder_${QT_VERSION}"
 printf "Building to \"${BUILD_DIRECTORY_PATH}\".\n"
 printf "Removing previous build artifacts...\n"
 rm -rf $BUILD_DIRECTORY_PATH

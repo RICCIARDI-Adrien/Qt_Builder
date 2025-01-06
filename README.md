@@ -45,6 +45,8 @@ Building on Ubuntu 18.04 :
 
 ## Usage
 
-Call `Qt_Builder.sh` script with as unique argument the Qt version you want to build (for instance `5.13.0`).  
+Call `Qt_Builder.sh` script with as mandatory argument the Qt version you want to build (for instance `5.13.0`).  
   
-Everything will then be downloaded and built into `/tmp` directory. At the end of the process, Qt will be installed to `/opt/Qt/<Qt version>`.
+Everything will then be downloaded and built into the `/tmp` directory. At the end of the process, Qt will be installed to `/opt/Qt/<Qt version>`.  
+
+It is also possible to specify the temporary build directory as the second (optional) argument.
