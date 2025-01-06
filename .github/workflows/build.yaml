@@ -20,6 +20,8 @@ jobs:
       - name: Install build dependency packages
         run: |
           apt update
+          # Install tzdata separately to avoid being stuck in a time zone configuration dialog
+          DEBIAN_FRONTEND=noninteractive apt install -y tzdata
           apt build-dep -y qt5-default
           apt install -y bison flex git gperf libclang-dev libdbus-1-dev libnss3-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxtst-dev patchelf python sudo wget
       - name: Build Qt ${{ matrix.version }}
@@ -27,34 +29,26 @@ jobs:
 
   qt6_20_04:
     name: Qt 6
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    container: ubuntu:20.04
     strategy:
       fail-fast: false
       matrix:
-        # Still compile Qt 6.2.4 because archive names have changed starting from Qt 5.15.3, due to Qt changing their license
-        version: [6.0.4, 6.1.3, 6.2.4, 6.2.7, 6.3.2, 6.4.3, 6.5.3]
+        # Still compile Qt 6.2.4 because archive names have changed starting from Qt 6.2.5, due to Qt changing their license
+        version: [6.0.4, 6.1.3, 6.2.4, 6.2.10, 6.3.2, 6.4.3, 6.5.3]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
-      - name: Free disk space (GitHub image does not have enough free space)
-        uses: jlumbroso/free-disk-space@main
-        with:
-          android: true
-          dotnet: true
-          haskell: false
-          large-packages: false
-          docker-images: false
-          swap-storage: false
+        uses: actions/checkout@v4
       - name: Enable Ubuntu source repositories
         run: |
-          sudo sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
+          sed -e 's/#.*deb-src/deb-src/' -i /etc/apt/sources.list
       - name: Install build dependency packages
         run: |
-          sudo apt update
-          sudo apt build-dep qtbase5-dev
-          sudo apt install bison cmake flex gperf libb2-dev libclang-dev libclang-11-dev libclang-12-dev libdbus-1-dev libdirectfb-dev libgstreamer1.0-dev libnss3-dev libsystemd-dev libts-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxcb-composite0-dev libxcb-cursor-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-dri2-0-dev libxcb-dri3-dev libxcb-ewmh-dev libxcb-present-dev libxcb-record0-dev libxcb-res0-dev libxcb-screensaver0-dev libxcb-xf86dri0-dev libxcb-xtest0-dev libxcb-xv0-dev libxcb-xvmc0-dev libxtst-dev ninja-build patchelf xcb
+          apt update
+          apt build-dep -y qtbase5-dev
+          apt install -y bison cmake flex gperf libb2-dev libclang-dev libclang-11-dev libclang-12-dev libdbus-1-dev libdirectfb-dev libgstreamer1.0-dev libnss3-dev libsystemd-dev libts-dev libxcb-util-dev libxcb-xinerama0-dev libxcomposite-dev libxcursor-dev libxkbcommon-dev libxcb-composite0-dev libxcb-cursor-dev libxcb-damage0-dev libxcb-dpms0-dev libxcb-dri2-0-dev libxcb-dri3-dev libxcb-ewmh-dev libxcb-present-dev libxcb-record0-dev libxcb-res0-dev libxcb-screensaver0-dev libxcb-xf86dri0-dev libxcb-xtest0-dev libxcb-xv0-dev libxcb-xvmc0-dev libxtst-dev ninja-build patchelf sudo wget xcb
       - name: Build Qt ${{ matrix.version }}
-        run: ./Qt_Builder.sh ${{ matrix.version }}
+        run: ./Qt_Builder.sh ${{ matrix.version }} /mnt
 
   qt6_22_04:
     name: Qt 6
