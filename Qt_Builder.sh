@@ -15,7 +15,7 @@ PrintMessage()
 #--------------------------------------------------------------------------------------------------
 # Display banner
 printf "+-------------------------------------------+\n"
-printf "| Qt Builder (C) 2019-2023 Adrien RICCIARDI |\n"
+printf "| Qt Builder (C) 2019-2025 Adrien RICCIARDI |\n"
 printf "+-------------------------------------------+\n"
 
 # Make sure a Qt version has been provided
