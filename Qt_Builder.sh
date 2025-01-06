@@ -145,45 +145,25 @@ then
 	exit 5
 fi
 
-# Download linuxdeployqt sources
-PrintMessage "Downloading linuxdeployqt sources..."
-cd $BUILD_DIRECTORY_PATH
-git clone https://github.com/probonopd/linuxdeployqt
+# Download linuxdeploy
+PrintMessage "Downloading linuxdeploy sources..."
+sudo wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage -O /usr/bin/linuxdeploy.AppImage
 if [ $? -ne 0 ]
 then
-	printf "\033[31mError : failed to clone linuxdeployqt repository.\n\033[0m\n"
+	printf "\033[31mError : failed to download linuxdeploy to /usr/bin.\n\033[0m\n"
 	exit 6
 fi
+sudo chmod +x /usr/bin/linuxdeploy.AppImage
 
-# Build linuxdeployqt
-PrintMessage "Building linuxdeployqt..."
-# Configure project
-cd ${BUILD_DIRECTORY_PATH}/linuxdeployqt
-/opt/Qt/${QT_VERSION}/bin/qmake
+# Download linuxdeploy Qt plugin
+PrintMessage "Downloading linuxdeploy Qt plugin sources..."
+sudo wget https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage -O /usr/bin/linuxdeploy-plugin-qt.AppImage
 if [ $? -ne 0 ]
 then
-	printf "\033[31mError : failed to configure linuxdeployqt.\n\033[0m\n"
+	printf "\033[31mError : failed to download linuxdeploy Qt plugin to /usr/bin.\n\033[0m\n"
 	exit 7
 fi
-# Build it
-make
-if [ $? -ne 0 ]
-then
-	printf "\033[31mError : failed to build linuxdeployqt.\n\033[0m\n"
-	exit 8
-fi
-
-# Install linuxdeployqt
-PrintMessage "Installing linuxdeployqt..."
-cd ${BUILD_DIRECTORY_PATH}/linuxdeployqt
-sudo make install
-if [ $? -ne 0 ]
-then
-	printf "\033[31mError : failed to install linuxdeployqt.\n\033[0m\n"
-	exit 9
-fi
-# Make linuxdeployqt available from everywhere
-sudo ln -sf /opt/Qt/${QT_VERSION}/bin/linuxdeployqt /usr/bin/linuxdeployqt
+sudo chmod +x /usr/bin/linuxdeploy-plugin-qt.AppImage
 
 # Clean build artifacts
 rm -rf $BUILD_DIRECTORY_PATH
