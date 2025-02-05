@@ -103,11 +103,13 @@ cd qt-everywhere-src-${QT_VERSION}
 # Configure build
 PrintMessage "Configuring Qt build..."
 # XCB options have been modified starting from Qt 5.15
-if [[ (${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -eq 15) || ${QT_VERSION_MAJOR} -eq 6 ]]
+# They do not need to be specified anymore on Qt 6.7 and higher
+if [[ ${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -lt 15 ]]
+then
+	QT_CONFIGURATION_FLAGS="-qt-xcb"
+elif [[ (${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -eq 15) || (${QT_VERSION_MAJOR} -eq 6 && ${QT_VERSION_MINOR} -lt 7) ]]
 then
 	QT_CONFIGURATION_FLAGS="-bundled-xcb-xinput -xcb"
-else
-	QT_CONFIGURATION_FLAGS="-qt-xcb"
 fi
 # Qt versions before Qt 5.13 do not know about gold linker
 if [[ (${QT_VERSION_MAJOR} -eq 5 && ${QT_VERSION_MINOR} -ge 13) || ${QT_VERSION_MAJOR} -eq 6 ]]
